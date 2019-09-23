@@ -26,4 +26,25 @@ Let's keep it simple. We can identify people by name(works wonderfully in a smal
 
 ![both time clocks](both_timeclocks.png)
 
+The associated script for clocking in is straightforward to understand.
+
+```
+function onInSubmit() {
+  var responses = FormApp.getActiveForm().getResponses();
+  var last = responses[responses.length-1];
+  var username = String(last.getItemResponses()[0].getResponse()).trim();
+
+  Logger.log(username+" logging in");
+
+  var ss = SpreadsheetApp.openById("15s5WXak4KLxC9Tb3TAZBhi30FBIl_eMxYUXq1Ip4pwY");
+  Logger.log("got sheet:"+ss);
+  var usersheet = ss.getSheetByName(username);
+  if (!usersheet) {
+    Logger.log("usersheet not exist");
+    usersheet = timeclockutils.createUserSheet(ss, username);
+  }
+  timeclockutils.onClockIn(last.getTimestamp(), usersheet);
+}
+```
+
 
